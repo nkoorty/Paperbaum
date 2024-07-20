@@ -1,0 +1,60 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.1rem 14rem; /* Adjust padding to fit your design */
+    background: linear-gradient(to bottom, #1c1c1c, transparent);
+    color: #fff;
+    position: fixed;
+    height: 42px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    z-index: 2;
+}
+
+.navbar.solid {
+    background-color: rgba(6, 6, 6, 0.8);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+.logo {
+    display: flex; /* corrected from flex-row to flex */
+    align-items: center;
+}
+
+.logo img {
+    width: 22px; /* Adjust as needed for smaller size */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 0.3rem;
+}
+
+.logo a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.navLinks {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.navLinks li a {
+    text-decoration: none;
+    color: #9e9e9e;
+    transition: color 0.22s;
+}
+
+.navLinks p {
+    font-family: 'Georgia';
+    margin: 0; /* Ensure there's no extra margin */
+}
+
+.navLinks li a:hover {
+    color: #fff;
+}
