@@ -1,0 +1,121 @@
+.pageContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #000000;
+  }
+  
+  .uploadComponentWrapper {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 5rem; /* Add more top margin for vertical spacing */
+  }
+  
+  .fileUploadContainer {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #121212;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  .uploadArea {
+    margin-bottom: 2rem;
+  }
+  
+  .dropZone {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #4a90e2;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  
+  .dropZone:hover, .dropZoneActive {
+    background-color: rgba(74, 144, 226, 0.1);
+  }
+  
+  .dropZoneText {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .dropZoneSubText {
+    color: #bebebe;
+    font-size: 0.9rem;
+  }
+  
+  .fileInput {
+    display: none;
+  }
+  
+  .uploadButton {
+    width: 100%;
+    background-color: #4a90e2;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .uploadButton:hover {
+    background-color: #357abd;
+  }
+  
+  .uploadButton:disabled {
+    background-color: #6c7a89;
+    cursor: not-allowed;
+  }
+  
+  .errorMessage {
+    color: #e74c3c;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .uploadedPaper {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .uploadedPaperTitle {
+    color: #4a90e2;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .uploadedPaper p {
+    color: #bebebe;
+    margin-bottom: 0.5rem;
+  }
+  
+  .uploadedPaper a {
+    color: #4a90e2;
+    text-decoration: none;
+  }
+  
+  .uploadedPaper a:hover {
+    text-decoration: underline;
+  }
+  
+  .txHash {
+    margin-top: 1rem;
+    color: #4a90e2;
+  }

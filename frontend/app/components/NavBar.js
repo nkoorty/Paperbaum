@@ -24,11 +24,12 @@ const NavBar = () => {
     return (
         <nav className={`${styles.navbar} ${isSolid ? styles.solid : styles.solid}`}>
             <div className={styles.logo}>
-                <Link href="/">ZKnowledge</Link>
+                <img src="paperbaum_t.png" alt="Paperbaum Logo" className={styles.img} />
+                <Link href="/">Paperbaum</Link>
             </div>
             <ul className={styles.navLinks}>
                 <li><Link href="/upload">Upload</Link></li>
-                <li><Link href="https://github.com">GitHub</Link></li>
+                <li><Link href="https://github.com/nkoorty/PolkadotPapers">GitHub</Link></li>
             </ul>
             <ul className={styles.navLinks}>
                 <p>Coming Soon</p>

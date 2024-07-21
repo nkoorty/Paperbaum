@@ -1,9 +1,8 @@
-'use client';
-
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useRef } from 'react';
 import { useSubstrate } from '../hooks/useSubstrate';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import axios from 'axios';
+import styles from '../upload/uploadpage.module.css';
 
 export default function FileUpload({ onUpload }) {
   const { api, error: substrateError } = useSubstrate();
@@ -12,10 +11,38 @@ export default function FileUpload({ onUpload }) {
   const [error, setError] = useState(null);
   const [txHash, setTxHash] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragActive, setIsDragActive] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setFile(e.dataTransfer.files[0]);
+    }
+  };
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
-    console.log('File selected:', event.target.files[0].name);
   };
 
   const handleSubmit = async (event) => {
@@ -108,27 +135,66 @@ export default function FileUpload({ onUpload }) {
   };
 
   return (
-    <div>
-      <h2>Upload PDF</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} accept=".pdf" disabled={isUploading} />
-        <button type="submit" disabled={isUploading || !file}>
-          {isUploading ? 'Uploading...' : 'Upload'}
+    <div className={styles.fileUploadContainer}>
+      <div className={styles.uploadArea}>
+        <div
+          className={`${styles.dropZone} ${isDragActive ? styles.dropZoneActive : ''}`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current.click()}
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".pdf"
+            className={styles.fileInput}
+          />
+          {file ? (
+            <p className={styles.dropZoneText}>{file.name}</p>
+          ) : (
+            <>
+              <p className={styles.dropZoneText}>Drop PDF file here</p>
+              <p className={styles.dropZoneSubText}>or click to select</p>
+            </>
+          )}
+        </div>
+        
+        <button
+          onClick={handleSubmit}
+          disabled={isUploading || !file}
+          className={styles.uploadButton}
+        >
+          {isUploading ? 'Uploading...' : 'Upload Paper'}
         </button>
-      </form>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {substrateError && <p style={{color: 'red'}}>Substrate Error: {substrateError}</p>}
+      </div>
+
+      {error && <p className={styles.errorMessage}>{error}</p>}
+      {substrateError && <p className={styles.errorMessage}>Substrate Error: {substrateError}</p>}
+      
       {response && (
-        <div>
-          <h3>Uploaded Paper:</h3>
+        <div className={styles.uploadedPaper}>
+          <h3 className={styles.uploadedPaperTitle}>Uploaded Paper:</h3>
           <p><strong>Title:</strong> {response.title}</p>
           <p><strong>Authors:</strong> {response.authors}</p>
           <p><strong>Abstract:</strong> {response.abstract}</p>
           <p><strong>Keywords:</strong> {response.keywords.join(', ')}</p>
-          <p><strong>IPFS URL:</strong> <a href={response.ipfsUrl} target="_blank" rel="noopener noreferrer">{response.ipfsUrl}</a></p>
+          <p>
+            <strong>IPFS URL:</strong>{' '}
+            <a href={response.ipfsUrl} target="_blank" rel="noopener noreferrer">
+              {response.ipfsUrl}
+            </a>
+          </p>
         </div>
       )}
-      {txHash && <p><strong>Transaction Hash:</strong> {txHash}</p>}
+      
+      {txHash && (
+        <p className={styles.txHash}>
+          <strong>Transaction Hash:</strong> {txHash}
+        </p>
+      )}
     </div>
   );
 }

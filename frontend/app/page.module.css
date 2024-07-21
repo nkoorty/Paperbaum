@@ -26,6 +26,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 80%;
 }
 
 .heroOverlay {
@@ -166,13 +167,30 @@
 }
 
 
-.paperDetails {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 1rem;
-  margin-bottom: 1rem;
+.paperHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
+  margin-bottom: 0.5rem;
 }
 
+.paperHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.paperHeader h3 {
+  margin: 0;
+  color: #4a90e2;
+}
 
 .paperDetails h3 {
   margin-top: 0;
@@ -190,4 +208,72 @@
 
 .paperDetails a:hover {
   text-decoration: underline;
+}
+
+.merkleTree {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.merkleNode {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.merkleNode h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #4a90e2;
+}
+
+.merkleNode p {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+}
+
+.merkleChildren {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.merkleChildren .merkleNode {
+  flex: 1;
+  margin: 0 0.5rem;
+}
+
+.paperContent {
+  padding: 1rem;
+}
+
+.paperContent p {
+  margin: 0.5rem 0;
+}
+
+.paperContent a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.paperContent a:hover {
+  text-decoration: underline;
+}
+
+.graphContainer {
+  height: 300px;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 1rem;
+  position: relative;
+}
+
+.paperCard {
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
 }

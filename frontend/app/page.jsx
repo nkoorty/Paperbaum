@@ -90,7 +90,7 @@ export default function Home() {
         />
         <div className={styles.heroOverlay}>
           <div className={styles.heroText}>
-            <h1>ZKnowledge Base</h1>
+            <h1>Paperbaum</h1>
             <p>Discover and share research papers</p>
           </div>
         </div>

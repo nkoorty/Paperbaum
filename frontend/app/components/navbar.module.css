@@ -26,7 +26,7 @@
 }
 
 .logo img {
-    width: 22px; /* Adjust as needed for smaller size */
+    width: 16px; /* Adjust as needed for smaller size */
     height: auto; /* Maintain aspect ratio */
     margin-right: 0.3rem;
 }
