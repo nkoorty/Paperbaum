@@ -4,12 +4,6 @@
 
 Paperbaum is a decentralized academic paper publishing and verification system built on a Substrate-based parachain. It addresses issues of authorship verification, restricted access, and inefficient paper linking in academic publishing.
 
-## Images
-<img src=https://github.com/user-attachments/assets/cebaa7ac-5f2e-4efb-bfa8-d3afce0734e3 width=100%>
-<img src=https://github.com/user-attachments/assets/1c621f98-d9df-417e-92d7-db6a1b2354c9 width=100%>
-<img src=https://github.com/user-attachments/assets/d1d4f39c-96e0-423b-9c1f-be90f3ce1a3b width=100%>
-
-
 ## Core Components
 * **Substrate Parachain:** Custom runtime for paper metadata storage in a merkle tree and verification.
 * **IPFS Integration:** Decentralized storage for full paper content.
@@ -38,6 +32,13 @@ When a paper is uploaded, Paperbaum processes the PDF, extracts key metadata, an
 3. Vector embedding generation
 4. IPFS upload
 5. Storage of metadata and vector in-memory in a merkle tree
+
+## Images
+<img src=https://github.com/user-attachments/assets/cebaa7ac-5f2e-4efb-bfa8-d3afce0734e3 width=50%>
+<img src=https://github.com/user-attachments/assets/1c621f98-d9df-417e-92d7-db6a1b2354c9 width=50%>
+<img src=https://github.com/user-attachments/assets/d1d4f39c-96e0-423b-9c1f-be90f3ce1a3b width=100%>
+
+
 
 ## How to Use
 ### Parachain
