@@ -18,10 +18,6 @@ export default function FileUpload({ onUpload }) {
     console.log('File selected:', event.target.files[0].name);
   };
 
-  const stringToU8a = (str) => {
-    return new TextEncoder().encode(str);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!file) {
@@ -49,7 +45,7 @@ export default function FileUpload({ onUpload }) {
       console.log('Substrate API available');
 
       console.log('Enabling Web3...');
-      await web3Enable('MySubstrateApp');
+      await web3Enable('ZK');
 
       const accounts = await web3Accounts();
       console.log('Available accounts:', accounts);
@@ -63,12 +59,12 @@ export default function FileUpload({ onUpload }) {
       const { title, authors, abstract, ipfsUrl, keywords, vector } = res.data;
 
       const tx = api.tx.paperMgmt.addPaper(
-        stringToU8a(title),
-        stringToU8a(authors),
-        stringToU8a(abstract),
-        stringToU8a(ipfsUrl),
-        Uint8Array.from(Buffer.from(vector, 'hex')),
-        keywords.map(stringToU8a)
+        title,
+        authors,
+        abstract,
+        ipfsUrl,
+        vector,
+        keywords
       );
 
       console.log('Transaction created:', tx.method.toHuman());

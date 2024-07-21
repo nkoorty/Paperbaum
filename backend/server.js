@@ -178,6 +178,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
     const paper = {
       ...metadata,
+      abstractText: metadata.abstract,
       ipfsUrl: ipfsUrl,
       vector: '0x' + embedding.map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('')
     };

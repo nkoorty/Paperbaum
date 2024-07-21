@@ -1,17 +1,19 @@
 'use client';
 
-import styles from "./dashboard.module.css";
+import dynamic from 'next/dynamic';
 
-const Upload = () => {
-    return (
-    <body>
-        <div className={styles.container}>
-            <div className={styles.content}>
-                Upload here pls
-            </div>
-        </div>
-    </body>
-    );
-};
+const FileUpload = dynamic(() => import('../components/FileUpload'), { ssr: false });
 
-export default Upload;
+export default function UploadPage() {
+  const handleUpload = () => {
+    // Handle the upload logic here
+    console.log('Paper uploaded');
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Upload a Paper</h1>
+      <FileUpload onUpload={handleUpload} />
+    </div>
+  );
+}

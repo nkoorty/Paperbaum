@@ -15,9 +15,9 @@
 }
 
 .navbar.solid {
-    background-color: rgba(6, 6, 6, 0.8);
+    background-color: rgba(6, 6, 6, 0.6);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(30px);
 }
 
 .logo {
@@ -46,7 +46,7 @@
 
 .navLinks li a {
     text-decoration: none;
-    color: #9e9e9e;
+    color: #d5d5d5;
     transition: color 0.22s;
 }
 

@@ -1,75 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSubstrate } from '../hooks/useSubstrate';
 import axios from 'axios';
+import styles from '../page.module.css';
 
-export default function PaperList() {
-  const { api, error: substrateError } = useSubstrate();
-  const [papers, setPapers] = useState([]);
+export default function PaperList({ papers }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  const hexToString = (hex) => {
-    if (typeof hex !== 'string' || !hex.startsWith('0x')) return hex;
-    try {
-      return decodeURIComponent(
-        hex.slice(2).replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&')
-      );
-    } catch (e) {
-      console.error('Failed to decode hex string:', hex, e);
-      return hex;
-    }
-  };
-
   useEffect(() => {
-    if (api) {
-      const fetchPapers = async () => {
-        try {
-          console.log('Fetching papers...');
-          const entries = await api.query.paperMgmt.papers.entries();
-          console.log('Raw paper entries:', entries);
-          
-          if (entries.length === 0) {
-            console.log('No papers found in the chain state.');
-          } else {
-            entries.forEach(([key, value], index) => {
-              console.log(`Paper ${index + 1}:`);
-              console.log('Key:', key.toHuman());
-              console.log('Value:', value.toHuman());
-            });
-          }
-          
-          const formattedPapers = entries.map(([key, value]) => {
-            const hash = key.args[0].toHuman();
-            const data = value.toHuman();
-            console.log('Raw paper data:', data);
-            return {
-              hash,
-              title: hexToString(data.title),
-              authors: hexToString(data.authors),
-              abstractText: hexToString(data.abstract_text),
-              ipfsUrl: data.ipfs_url,
-              vector: data.vector,
-              keywords: Array.isArray(data.keywords) 
-                ? data.keywords.map(hexToString) 
-                : hexToString(data.keywords),
-            };
-          });
-  
-          console.log('Formatted papers:', formattedPapers);
-          setPapers(formattedPapers);
-        } catch (err) {
-          console.error('Error fetching papers:', err);
-          setError('Failed to fetch papers: ' + err.message);
-        }
-      };
-  
-      fetchPapers();
-    }
-  }, [api]);
+    console.log('All papers:', papers);
+  }, [papers]);
 
   const handleSearch = async () => {
     console.log('Starting search with query:', searchQuery);
@@ -91,23 +34,18 @@ export default function PaperList() {
 
   const displayPapers = searchResults.length > 0 ? searchResults : papers;
 
-  console.log('Current display papers:', displayPapers);
-
-  if (substrateError) return <div>Substrate Error: {substrateError}</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!api) return <div>Loading...</div>;
-
   return (
-    <div>
-      <h2>Uploaded Papers</h2>
-      <div>
+    <div className={styles.paperListContainer}>
+      <h2 className={styles.sectionTitle}>All Papers</h2>
+      <div className={styles.searchContainer}>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search papers..."
+          className={styles.searchInput}
         />
-        <button onClick={handleSearch} disabled={isSearching}>
+        <button onClick={handleSearch} disabled={isSearching} className={styles.searchButton}>
           {isSearching ? 'Searching...' : 'Search'}
         </button>
       </div>
@@ -116,17 +54,30 @@ export default function PaperList() {
       ) : displayPapers.length === 0 ? (
         <p>No papers found.</p>
       ) : (
-        displayPapers.map((paper, index) => (
-          <div key={index} style={{marginBottom: '20px', border: '1px solid #ccc', padding: '10px'}}>
-            <h3>{paper.title}</h3>
-            <p><strong>Authors:</strong> {paper.authors}</p>
-            <p><strong>Abstract:</strong> {paper.abstractText}</p>
-            <p><strong>Keywords:</strong> {Array.isArray(paper.keywords) ? paper.keywords.join(', ') : paper.keywords}</p>
-            <p><strong>IPFS URL:</strong> <a href={paper.ipfsUrl} target="_blank" rel="noopener noreferrer">{paper.ipfsUrl}</a></p>
-            {paper.similarity !== undefined && <p><strong>Similarity:</strong> {paper.similarity.toFixed(4)}</p>}
-            <p><strong>Hash:</strong> {paper.hash}</p>
-          </div>
-        ))
+        displayPapers.map((paper, index) => {
+          console.log(`Paper ${index}:`, paper);
+          return (
+            <div key={index} className={styles.paperDetails}>
+              <h3>{paper.title}</h3>
+              <p><strong>Authors:</strong> {paper.authors}</p>
+              <p><strong>Keywords:</strong> {Array.isArray(paper.keywords) ? paper.keywords.join(', ') : paper.keywords}</p>
+              <p>
+                <strong>IPFS URL: </strong> 
+                {paper.ipfsUrl || paper.ipfs_url ? (
+                  <a href={paper.ipfsUrl || paper.ipfs_url} target="_blank" rel="noopener noreferrer">
+                    {paper.ipfsUrl || paper.ipfs_url}
+                  </a>
+                ) : (
+                  <a href="https://bafybeiekxcarjzxx4ck64tvyh6jq3br4ktf334omqnb4ab3ovqjdek43wi.ipfs.w3s.link/" target="_blank" rel="noopener noreferrer">
+                    https://bafybeiekxcarjzxx4ck64tvyh6jq3br4ktf334omqnb4ab3ovqjdek43wi.ipfs.w3s.link/
+                  </a>
+                )}
+              </p>
+              {paper.similarity !== undefined && <p><strong>Similarity:</strong> {paper.similarity.toFixed(4)}</p>}
+              <p><strong>Hash:</strong> {paper.hash}</p>
+            </div>
+          );
+        })
       )}
     </div>
   );

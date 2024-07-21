@@ -15,17 +15,17 @@
   --card-border-rgb: 131, 134, 135;
 }
 
-
 * {
-  box-sizing: inherit;
+  box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
+html,
+body {
   padding: 0;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  margin: 0;
+  background-color: #000000;
+  color: #ffffff;
+  min-height: 100vh;
 }
 
 body {

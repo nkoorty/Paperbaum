@@ -256,12 +256,12 @@ impl pallet_papermgmt::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type Hasher = BlakeTwo256;
     type MaxLeaves = ConstU32<1000>;  // Adjust this value as needed
-    type MaxVectorLength = ConstU32<1024>;  // Maximum length of the vector representation
+    type MaxVectorLength = ConstU32<9192>;  // Maximum length of the vector representation
     type MaxKeywords = ConstU32<10>;  // Maximum number of keywords per paper
-    type MaxTitleLength = ConstU32<256>;  // Maximum length of the paper title
-    type MaxAuthorsLength = ConstU32<1024>;  // Maximum length for authors field
-    type MaxAbstractLength = ConstU32<2048>;  // Maximum length of the abstract
-    type MaxIpfsUrlLength = ConstU32<256>;  // Maximum length of the IPFS URL
+    type MaxTitleLength = ConstU32<1024>;  // Maximum length of the paper title
+    type MaxAuthorsLength = ConstU32<2048>;  // Maximum length for authors field
+    type MaxAbstractLength = ConstU32<4096>;  // Maximum length of the abstract
+    type MaxIpfsUrlLength = ConstU32<2048>;  // Maximum length of the IPFS URL
 }
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]

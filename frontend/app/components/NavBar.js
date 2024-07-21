@@ -22,7 +22,7 @@ const NavBar = () => {
     }, []);
 
     return (
-        <nav className={`${styles.navbar} ${isSolid ? styles.solid : ''}`}>
+        <nav className={`${styles.navbar} ${isSolid ? styles.solid : styles.solid}`}>
             <div className={styles.logo}>
                 <Link href="/">ZKnowledge</Link>
             </div>
