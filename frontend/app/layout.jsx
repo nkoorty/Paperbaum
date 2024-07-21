@@ -5,7 +5,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <title>ZKnowledge</title>
+        <title>Paperbaum</title>
       </head>
       <body>
         <NavBar />
