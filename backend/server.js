@@ -67,162 +67,158 @@ async function uploadToIPFS(filePath) {
 }
 
 async function generateEmbedding(text) {
-    const response = await openai.embeddings.create({
-      model: "text-embedding-ada-002",
-      input: text,
-    });
-    return response.data[0].embedding;
+  const response = await openai.embeddings.create({
+    model: "text-embedding-ada-002",
+    input: text,
+  });
+  return response.data[0].embedding.slice(0, 100);
 }
 
 function hexToString(hex) {
-    if (hex.startsWith('0x')) {
-      hex = hex.slice(2);
-    }
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2) {
-      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-    }
-    return str;
+  if (hex.startsWith('0x')) {
+    hex = hex.slice(2);
+  }
+  let str = '';
+  for (let i = 0; i < hex.length; i += 2) {
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  }
+  return str;
+}
+
+function hexToVector(hexString) {
+  const hex = hexString.startsWith('0x') ? hexString.slice(2) : hexString;
+  return hex.match(/.{1,2}/g).map(byte => parseInt(byte, 16) / 255);
 }
 
 function cosineSimilarity(vecA, vecB) {
-    // Ensure both vectors are arrays of numbers
-    const a = Array.isArray(vecA) ? vecA : hexToVector(vecA);
-    const b = Array.isArray(vecB) ? vecB : hexToVector(vecB);
+  const a = Array.isArray(vecA) ? vecA : hexToVector(vecA);
+  const b = Array.isArray(vecB) ? vecB : hexToVector(vecB);
 
-    const dotProduct = a.reduce((sum, a, i) => sum + a * b[i], 0);
-    const magnitudeA = Math.sqrt(a.reduce((sum, a) => sum + a * a, 0));
-    const magnitudeB = Math.sqrt(b.reduce((sum, b) => sum + b * b, 0));
-    return dotProduct / (magnitudeA * magnitudeB);
+  const dotProduct = a.reduce((sum, a, i) => sum + a * b[i], 0);
+  const magnitudeA = Math.sqrt(a.reduce((sum, a) => sum + a * a, 0));
+  const magnitudeB = Math.sqrt(b.reduce((sum, b) => sum + b * b, 0));
+  return dotProduct / (magnitudeA * magnitudeB);
 }
 
 app.post('/upload', upload.single('file'), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-      }
-  
-      const fileBuffer = await fs.readFile(req.file.path);
-      const pdfData = await pdf(fileBuffer);
-      const text = pdfData.text.substring(0, 4000);
-  
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {"role": "system", "content": `You are an assistant that extracts information from academic papers. Format your response exactly as shown in the example, with hexadecimal encoding for the title and authors when they contain non-ASCII characters.`},
-          {"role": "user", "content": `Extract the following information from the given text:
-          1. Title (hexadecimal encoded if it contains non-ASCII characters, otherwise plain text)
-          2. Authors (hexadecimal encoded if it contains non-ASCII characters, otherwise plain text)
-          3. Abstract (plain text)
-          4. 5 keywords (as an array of strings)
-  
-          Format your response exactly like this:
-          {
-            title: "Paper Title Here" or hex if you have to,
-            authors: "Author Names Here" or hex if you have to,
-            abstract: "Abstract text here (not hexadecimal encoded)",
-            keywords: [
-              "keyword1",
-              "keyword2",
-              "keyword3",
-              "keyword4",
-              "keyword5"
-            ]
-          }
-  
-          Text to extract from:
-          ${text}`}
-        ],
-        temperature: 0.3,
-        max_tokens: 1000
-      });
-  
-      console.log('OpenAI API response:', response.choices[0].message.content);
-  
-      let metadata;
-      try {
-        const rawResponse = response.choices[0].message.content;
-        const parsedResponse = rawResponse.match(/\{([^}]+)\}/)[1];
-        const fields = parsedResponse.split(',').map(field => field.trim());
-        
-        metadata = {
-          title: fields.find(f => f.startsWith('title:')).split(':')[1].trim().replace(/^"|"$/g, ''),
-          authors: fields.find(f => f.startsWith('authors:')).split(':')[1].trim().replace(/^"|"$/g, ''),
-          abstract: fields.find(f => f.startsWith('abstract:')).split(':')[1].trim().replace(/^"|"$/g, ''),
-          keywords: JSON.parse(fields.find(f => f.startsWith('keywords:')).split(':')[1].trim())
-        };
-
-        // Decode hexadecimal strings
-        metadata.title = metadata.title.startsWith('0x') ? hexToString(metadata.title) : metadata.title;
-        metadata.authors = metadata.authors.startsWith('0x') ? hexToString(metadata.authors) : metadata.authors;
-
-      } catch (parseError) {
-        console.error('Failed to parse OpenAI response:', parseError);
-        throw new Error('Failed to parse metadata from the paper');
-      }
-  
-      // Generate embedding
-      const embeddingText = `${metadata.title} ${metadata.abstract} ${metadata.keywords.join(' ')}`;
-      const embedding = await generateEmbedding(embeddingText);
-  
-      const ipfsUrl = await uploadToIPFS(req.file.path);
-  
-      if (!ipfsUrl) {
-        throw new Error('Failed to upload to IPFS');
-      }
-  
-      await fs.unlink(req.file.path);
-  
-      const paper = {
-        ...metadata,
-        ipfsUrl: ipfsUrl,
-        vector: '0x' + embedding.map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('')
-      };
-  
-      // Store the paper in memory
-      papers.push(paper);
-  
-      res.json(paper);
-    } catch (error) {
-      console.error('Error in /upload:', error);
-      res.status(500).send('An error occurred during file processing: ' + error.message);
+  try {
+    if (!req.file) {
+      return res.status(400).send('No file uploaded.');
     }
+
+    const fileBuffer = await fs.readFile(req.file.path);
+    const pdfData = await pdf(fileBuffer);
+    const text = pdfData.text.substring(0, 4000);
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {"role": "system", "content": `You are an assistant that extracts information from academic papers.`},
+        {"role": "user", "content": `Extract the following information from the given text:
+        1. Title
+        2. Authors
+        3. Abstract
+        4. 5 keywords
+
+        Format your response exactly like this:
+        Title: [Title here]
+        Authors: [Authors here]
+        Abstract: [Abstract here]
+        Keywords: [keyword1], [keyword2], [keyword3], [keyword4], [keyword5]
+
+        Text to extract from:
+        ${text}`}
+      ],
+      temperature: 0.3,
+      max_tokens: 1000
+    });
+
+    console.log('OpenAI API response:', response.choices[0].message.content);
+
+    let metadata;
+    try {
+      const rawResponse = response.choices[0].message.content;
+      console.log('Raw OpenAI response:', rawResponse);
+
+      // Extract information using regex
+      const titleMatch = rawResponse.match(/Title:\s*(.*)/);
+      const authorsMatch = rawResponse.match(/Authors:\s*(.*)/);
+      const abstractMatch = rawResponse.match(/Abstract:\s*([\s\S]*?)(?=\nKeywords:)/);
+      const keywordsMatch = rawResponse.match(/Keywords:\s*(.*)/);
+
+      if (!titleMatch || !authorsMatch || !abstractMatch || !keywordsMatch) {
+        throw new Error('Failed to extract all required fields from the OpenAI response');
+      }
+
+      metadata = {
+        title: titleMatch[1].trim(),
+        authors: authorsMatch[1].trim(),
+        abstract: abstractMatch[1].trim(),
+        keywords: keywordsMatch[1].split(',').map(k => k.trim())
+      };
+
+      console.log('Parsed metadata:', metadata);
+
+    } catch (parseError) {
+      console.error('Failed to parse OpenAI response:', parseError);
+      console.error('Raw response:', response.choices[0].message.content);
+      throw new Error('Failed to parse metadata from the paper');
+    }
+
+    const embeddingText = `${metadata.title} ${metadata.abstract} ${metadata.keywords.join(' ')}`;
+    const embedding = await generateEmbedding(embeddingText);
+
+    const ipfsUrl = await uploadToIPFS(req.file.path);
+
+    if (!ipfsUrl) {
+      throw new Error('Failed to upload to IPFS');
+    }
+
+    await fs.unlink(req.file.path);
+
+    const paper = {
+      ...metadata,
+      ipfsUrl: ipfsUrl,
+      vector: '0x' + embedding.map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('')
+    };
+
+    papers.push(paper);
+
+    res.json(paper);
+  } catch (error) {
+    console.error('Error in /upload:', error);
+    res.status(500).send('An error occurred during file processing: ' + error.message);
+  }
 });
 
 app.post('/search', async (req, res) => {
-    try {
-      const { query } = req.body;
-      console.log('Received search query:', query);
-      console.log('Current papers in memory:', papers);
+  try {
+    const { query } = req.body;
+    console.log('Received search query:', query);
+    console.log('Current papers in memory:', papers);
 
-      if (papers.length === 0) {
-        console.log('No papers found in memory');
-        return res.json([]);
-      }
-
-      const queryEmbedding = await generateEmbedding(query);
-
-      // Convert query embedding to the same format as stored vectors
-      const queryVector = '0x' + queryEmbedding.map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
-
-      const results = papers.map(paper => {
-        const similarity = cosineSimilarity(queryVector, paper.vector);
-        return {
-          ...paper,
-          similarity: similarity
-        };
-      }).sort((a, b) => b.similarity - a.similarity);
-
-      console.log('Search results:', results.map(r => ({ title: r.title, similarity: r.similarity })));
-
-      res.json(results);
-    } catch (error) {
-      console.error('Error in search:', error);
-      res.status(500).send('An error occurred during search: ' + error.message);
+    if (papers.length === 0) {
+      console.log('No papers found in memory');
+      return res.json([]);
     }
+
+    const queryEmbedding = await generateEmbedding(query);
+    const queryVector = '0x' + queryEmbedding.map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
+
+    const results = papers.map(paper => ({
+      ...paper,
+      similarity: cosineSimilarity(queryVector, paper.vector)
+    })).sort((a, b) => b.similarity - a.similarity);
+
+    console.log('Search results:', results.map(r => ({ title: r.title, similarity: r.similarity })));
+
+    res.json(results);
+  } catch (error) {
+    console.error('Error in search:', error);
+    res.status(500).send('An error occurred during search: ' + error.message);
+  }
 });
 
-// New endpoint to get all papers (for testing purposes)
 app.get('/papers', (req, res) => {
   res.json(papers);
 });

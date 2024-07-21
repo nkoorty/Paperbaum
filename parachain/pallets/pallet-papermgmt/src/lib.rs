@@ -123,35 +123,35 @@ pub mod pallet {
             vector: Vec<u8>,
             keywords: Vec<Vec<u8>>,
         ) -> DispatchResult {
-            ensure_signed(origin)?;
-
+            let _who = ensure_signed(origin)?;
+        
             let bounded_title: BoundedVec<u8, T::MaxTitleLength> = title
                 .try_into()
                 .map_err(|_| Error::<T>::TitleTooLong)?;
-
+        
             let bounded_authors: BoundedVec<u8, T::MaxAuthorsLength> = authors
                 .try_into()
                 .map_err(|_| Error::<T>::AuthorsTooLong)?;
-
+        
             let bounded_abstract: BoundedVec<u8, T::MaxAbstractLength> = abstract_text
                 .try_into()
                 .map_err(|_| Error::<T>::AbstractTooLong)?;
-
+        
             let bounded_ipfs_url: BoundedVec<u8, T::MaxIpfsUrlLength> = ipfs_url
                 .try_into()
                 .map_err(|_| Error::<T>::IpfsUrlTooLong)?;
-
+        
             let bounded_vector: BoundedVec<u8, T::MaxVectorLength> = vector
                 .try_into()
                 .map_err(|_| Error::<T>::VectorTooLong)?;
-
+        
             let bounded_keywords: BoundedVec<BoundedVec<u8, T::MaxTitleLength>, T::MaxKeywords> = keywords
                 .into_iter()
                 .map(|k| k.try_into().map_err(|_| Error::<T>::TitleTooLong))
                 .collect::<Result<Vec<_>, _>>()?
                 .try_into()
                 .map_err(|_| Error::<T>::TooManyKeywords)?;
-
+        
             let metadata = PaperMetadata {
                 title: bounded_title.clone(),
                 authors: bounded_authors,
@@ -160,12 +160,12 @@ pub mod pallet {
                 vector: bounded_vector,
                 keywords: bounded_keywords,
             };
-
+        
             let paper_hash = T::Hasher::hash_of(&bounded_title);
-
+        
             Papers::<T>::insert(paper_hash, metadata);
             Self::deposit_event(Event::PaperAdded(paper_hash));
-
+        
             Ok(())
         }
     }
