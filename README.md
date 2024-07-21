@@ -1,6 +1,8 @@
 # Paperbaum - Parachain for Academic Papers
 
-![paperbaum_github](https://github.com/user-attachments/assets/d46c01d2-ac3a-421f-8a36-9165831f98d4)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/d46c01d2-ac3a-421f-8a36-9165831f98d4" width="60%">
+</div>
 
 Paperbaum is a decentralized academic paper publishing and verification system built on a Substrate-based parachain. It addresses issues of authorship verification, restricted access, and inefficient paper linking in academic publishing.
 
