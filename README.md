@@ -40,6 +40,38 @@ When a paper is uploaded, Paperbaum processes the PDF, extracts key metadata, an
 5. Storage of metadata and vector in-memory in a merkle tree
 
 ## How to Use
+### Parachain
+For the parachain, first compile it using
+
+    cargo build --release
+
+and then run
+
+    ./target/release/node-template --dev
+
+to run the substrate node on `127.0.0.1:9944`
+
+### Backend
+To run the backend server, enter the `backend` directory and run
+
+    npm install
+
+and then proceed to run
+
+    node server.js
+
+to run the server on `localhost:3000`
+
+### Frontend
+To run the frontend, enter the `frontend` directory and run
+
+    npm install
+
+and then
+
+    npm run dev
+
+to run the frontend on `localhost:3001`
 
 ## Roadmap
 #### 1. Enhanced Merkle Tree Implementation
