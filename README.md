@@ -6,6 +6,8 @@
 
 Paperbaum is a decentralized academic paper publishing and verification system built on a Substrate-based parachain. It addresses issues of authorship verification, restricted access, and inefficient paper linking in academic publishing.
 
+Link to the slides: [here](https://www.canva.com/design/DAGLkKlpMi4/xpdo0AnDnvzOIse7Nd_f3w/edit?utm_content=DAGLkKlpMi4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 ## Core Components
 ![Screenshot 2024-07-21 at 11 23 39](https://github.com/user-attachments/assets/d7996c2a-f8c9-40d7-9cb0-980b5eeb9bc7)
 
